@@ -120,6 +120,37 @@ const latLngBoundsToPixelBounds = (
 };
 
 /**
+ * Returns nearest marker.
+ *
+ * @hidden
+ */
+export const getNearestMarker = (
+  markers: Iterable<google.maps.Marker> | undefined,
+  position: google.maps.LatLng,
+  projection: google.maps.MapCanvasProjection,
+  threshold = 45
+): google.maps.Marker | undefined => {
+  if (!markers) return;
+  const point = projection.fromLatLngToContainerPixel(position);
+  let shortestDistance = Number.MAX_VALUE;
+  let nearest: google.maps.Marker;
+  for (const marker of markers) {
+    const pos = projection.fromLatLngToContainerPixel(marker.getPosition());
+    const dx = point.x - pos.x;
+    const dy = point.y - pos.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    if (distance < shortestDistance) {
+      nearest = marker;
+      shortestDistance = distance;
+    }
+    if (distance === 0) break;
+  }
+  if (shortestDistance <= threshold) {
+    return nearest;
+  }
+};
+
+/**
  * Extends a pixel bounds by numPixels in all directions.
  *
  * @hidden

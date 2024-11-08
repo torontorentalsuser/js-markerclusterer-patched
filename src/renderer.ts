@@ -108,7 +108,7 @@ export class DefaultRenderer implements Renderer {
     { count, position }: Cluster,
     stats: ClusterStats,
     map: google.maps.Map
-  ): Marker {
+  ): google.maps.MarkerOptions {
     // change color if this cluster has more markers than the mean cluster
     const color =
       count > Math.max(10, stats.clusters.markers.mean) ? "#ff0000" : "#0000ff";
@@ -152,7 +152,8 @@ export class DefaultRenderer implements Renderer {
         url: `data:image/svg+xml;base64,${btoa(svg)}`,
         anchor: new google.maps.Point(25, 25),
       },
+      optimized: false,
     };
-    return new google.maps.Marker(clusterOptions);
+    return clusterOptions;
   }
 }
